@@ -2,6 +2,9 @@ version: "3.9"
 
 services:
   nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     image: nginx-umk:v1
     container_name: nginx-apps
     restart: unless-stopped
@@ -20,7 +23,10 @@ services:
         ipv4_address: 10.23.8.10
 
   php:
-    image: php:8.3-fpm
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    image: php-umk:8.3-fpm
     container_name: php-fpm
     restart: unless-stopped
     environment:
