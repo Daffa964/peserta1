@@ -12,7 +12,7 @@ jobs:
     env:
       APP_ENV: production
       APP_URL: http://localhost
-      IMAGE_TAG: ghcr.io/${{ github.repository }}/peserta1:${{ github.sha }}
+      DOCKER_IMAGE: ghcr.io/${{ github.repository }}/peserta1:${{ github.sha }}
 
     steps:
       - name: Checkout repository
@@ -40,17 +40,30 @@ jobs:
             echo "No package.json found; skipping Node dependency install."
           fi
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Run unit tests
+        run: |
+          if [ -f vendor/bin/phpunit ]; then
+            php vendor/bin/phpunit --testsuite=Unit --do-not-cache-result
+          elif [ -f artisan ]; then
+            php artisan test
+          elif [ -f phpunit.xml ] || [ -f phpunit.xml.dist ]; then
+            if [ -f vendor/bin/phpunit ]; then
+              php vendor/bin/phpunit --do-not-cache-result
+            else
+              echo "PHPUnit executable not found after dependency install; skipping unit tests."
+            fi
+          else
+            echo "No unit test runner found; skipping unit tests."
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build NGINX and PHP images
+      - name: Build NGINX and PHP runtime images
         run: docker compose build nginx php
 
       - name: Build final Docker image
-        run: docker build -f Dockerfile.php -t "${IMAGE_TAG}" .
+        run: docker build -t "${IMAGE_TAG}" .
 
       - name: Push image to GHCR
         run: docker push "${IMAGE_TAG}"
