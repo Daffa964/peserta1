@@ -75,7 +75,7 @@ jobs:
         run: docker compose build nginx php
 
       - name: Build final Docker image
-        run: docker build -t "${IMAGE_TAG}" .
+        run: docker build -t "${IMAGE_TAG}" -f Dockerfile.php .
 
       - name: Push image to GHCR
         run: docker push "${IMAGE_TAG}"
