@@ -6,13 +6,17 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
       APP_ENV: production
       APP_URL: http://localhost
-      DOCKER_IMAGE: ghcr.io/${{ github.repository }}/peserta1:${{ github.sha }}
+      IMAGE_TAG: ghcr.io/${{ github.repository }}/peserta1:${{ github.sha }}
 
     steps:
       - name: Checkout repository
@@ -39,6 +43,9 @@ jobs:
           else
             echo "No package.json found; skipping Node dependency install."
           fi
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Run unit tests
         run: |
