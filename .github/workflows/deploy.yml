@@ -16,11 +16,16 @@ jobs:
     env:
       APP_ENV: production
       APP_URL: http://localhost
-      IMAGE_TAG: ghcr.io/${{ github.repository }}/peserta1:${{ github.sha }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set lowercase GHCR image tag
+        run: |
+          OWNER="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          REPO="$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')"
+          echo "IMAGE_TAG=ghcr.io/${OWNER}/${REPO}:${GITHUB_SHA}" >> "$GITHUB_ENV"
 
       - name: Set up PHP 8.3
         uses: shivammathur/setup-php@v2
