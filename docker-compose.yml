@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx-umk:v1
+    container_name: nginx-apps
+    restart: unless-stopped
+    depends_on:
+      - php
+      - db
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      APP_URL: ${APP_URL:-http://localhost}
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+    networks:
+      apps-netw:
+        ipv4_address: 10.23.8.10
+
+  php:
+    image: php:8.3-fpm
+    container_name: php-fpm
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      DB_HOST: ${DB_HOST:-db}
+      DB_DATABASE: ${DB_DATABASE:-peserta1_db}
+      DB_USERNAME: ${DB_USERNAME:-peserta1_user}
+      DB_PASSWORD: ${DB_PASSWORD:-peserta1_password}
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      apps-netw:
+        ipv4_address: 10.23.8.11
+
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-peserta1_db}
+      MYSQL_USER: ${MYSQL_USER:-peserta1_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-peserta1_password}
+      TZ: ${TZ:-Asia/Jakarta}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      apps-netw:
+        ipv4_address: 10.23.8.12
+
+networks:
+  apps-netw:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.23.8.0/23
+          gateway: 10.23.8.1
+
+volumes:
+  db-data:
+    
+    
