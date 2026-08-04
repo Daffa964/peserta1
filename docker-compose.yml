@@ -23,24 +23,24 @@ services:
       apps-netw:
         ipv4_address: 10.23.8.10
 
-  php:
-    build:
-      context: .
-      dockerfile: Dockerfile.php
-    image: php-umk:8.3-fpm
-    container_name: php-fpm
-    restart: unless-stopped
-    environment:
-      APP_ENV: ${APP_ENV:-production}
-      DB_HOST: ${DB_HOST:-db}
-      DB_DATABASE: ${DB_DATABASE:-peserta1_db}
-      DB_USERNAME: ${DB_USERNAME:-peserta1_user}
-      DB_PASSWORD: ${DB_PASSWORD:-peserta1_password}
-    volumes:
-      - ./html:/var/www/html
-    networks:
-      apps-netw:
-        ipv4_address: 10.23.8.11
+  # php:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.php
+  #   image: php-umk:8.3-fpm
+  #   container_name: php-fpm
+  #   restart: unless-stopped
+  #   environment:
+  #     APP_ENV: ${APP_ENV:-production}
+  #     DB_HOST: ${DB_HOST:-db}
+  #     DB_DATABASE: ${DB_DATABASE:-peserta1_db}
+  #     DB_USERNAME: ${DB_USERNAME:-peserta1_user}
+  #     DB_PASSWORD: ${DB_PASSWORD:-peserta1_password}
+  #   volumes:
+  #     - ./html:/var/www/html
+  #   networks:
+  #     apps-netw:
+  #       ipv4_address: 10.23.8.11
 
   db:
     image: mariadb:latest
