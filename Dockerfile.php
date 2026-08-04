@@ -5,7 +5,7 @@ RUN apk add --no-cache git unzip curl \
     && composer --version
 
 WORKDIR /var/www/html
-COPY backend/ /var/www/html/
+COPY . /var/www/html/
 
 EXPOSE 9000
 CMD ["php-fpm"]

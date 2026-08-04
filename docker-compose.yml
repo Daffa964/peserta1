@@ -36,7 +36,7 @@ services:
       DB_USERNAME: ${DB_USERNAME:-peserta1_user}
       DB_PASSWORD: ${DB_PASSWORD:-peserta1_password}
     volumes:
-      - ./backend:/var/www/html
+      - .:/var/www/html
     networks:
       apps-netw:
         ipv4_address: 10.23.8.11
